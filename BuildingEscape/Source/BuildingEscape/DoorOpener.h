@@ -5,18 +5,19 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "GameFramework/Actor.h"
+#include "Engine/TriggerVolume.h"
 
-#include "Door.generated.h"
+#include "DoorOpener.generated.h"
 
 
 UCLASS( ClassGroup = ( Custom ), meta = ( BlueprintSpawnableComponent ) )
-class BUILDINGESCAPE_API UDoor : public UActorComponent
+class BUILDINGESCAPE_API UDoorOpener : public UActorComponent
 {
 	GENERATED_BODY()
 
 public:	
 	// Sets default values for this component's properties
-	UDoor();
+	UDoorOpener();
 
 protected:
 	// Called when the game starts
@@ -26,7 +27,19 @@ public:
 	// Called every frame
 	virtual void TickComponent( float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction ) override;
 
-	void RotateDoor(FRotator NewRotation);
+	void OpenDoor();
+	void CloseDoor();
 
-	AActor* m_Actor;
+private:
+	UPROPERTY( VisibleAnywhere )
+	AActor* m_Door;
+	
+	UPROPERTY(VisibleAnywhere)
+	float m_OpenAngle = -90.f; // Open the door inside the room.
+
+	UPROPERTY( EditAnywhere )
+	ATriggerVolume* m_PressurePlate;
+	
+	UPROPERTY(EditAnywhere)
+	AActor* m_ActorThatOpens;
 };
