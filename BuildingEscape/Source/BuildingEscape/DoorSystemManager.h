@@ -5,7 +5,9 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "GameFramework/Actor.h"
+#include "GameFramework/PlayerController.h"
 #include "Engine/TriggerVolume.h"
+#include "Engine/World.h"
 
 #include "DoorSystemManager.generated.h"
 

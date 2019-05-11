@@ -4,10 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Engine/World.h"
+#include "GameFramework/PlayerController.h"
+
 #include "Grabber.generated.h"
 
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS( ClassGroup = ( Custom ), meta = ( BlueprintSpawnableComponent ) )
 class BUILDINGESCAPE_API UGrabber : public UActorComponent
 {
 	GENERATED_BODY()
@@ -22,7 +25,13 @@ protected:
 
 public:	
 	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	virtual void TickComponent( float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction ) override;
 
-		
+private:
+	void DrawVisionLine( FVector PlayerLocation, FVector LineTraceEnd ); // Debug function.
+
+	APlayerController* m_PlayerController;
+
+	UPROPERTY( EditAnywhere )
+	float m_VisionReach = 100.f;
 };
