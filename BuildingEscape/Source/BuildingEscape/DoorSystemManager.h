@@ -7,17 +7,17 @@
 #include "GameFramework/Actor.h"
 #include "Engine/TriggerVolume.h"
 
-#include "DoorOpener.generated.h"
+#include "DoorSystemManager.generated.h"
 
 
 UCLASS( ClassGroup = ( Custom ), meta = ( BlueprintSpawnableComponent ) )
-class BUILDINGESCAPE_API UDoorOpener : public UActorComponent
+class BUILDINGESCAPE_API UDoorSystemManager : public UActorComponent
 {
 	GENERATED_BODY()
 
 public:	
 	// Sets default values for this component's properties
-	UDoorOpener();
+	UDoorSystemManager();
 
 protected:
 	// Called when the game starts
@@ -31,7 +31,6 @@ public:
 	void CloseDoor();
 
 private:
-	UPROPERTY( VisibleAnywhere )
 	AActor* m_Door;
 	
 	UPROPERTY(VisibleAnywhere)
@@ -40,6 +39,5 @@ private:
 	UPROPERTY( EditAnywhere )
 	ATriggerVolume* m_PressurePlate;
 	
-	UPROPERTY(EditAnywhere)
 	AActor* m_ActorThatOpens;
 };

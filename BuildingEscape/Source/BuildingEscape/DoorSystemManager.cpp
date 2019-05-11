@@ -1,10 +1,10 @@
 // Copyright alexmo16 2019.
 
 
-#include "DoorOpener.h"
+#include "DoorSystemManager.h"
 
 // Sets default values for this component's properties
-UDoorOpener::UDoorOpener()
+UDoorSystemManager::UDoorSystemManager()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
@@ -15,23 +15,34 @@ UDoorOpener::UDoorOpener()
 
 
 // Called when the game starts
-void UDoorOpener::BeginPlay()
+void UDoorSystemManager::BeginPlay()
 {
 	Super::BeginPlay();
 
 	// Make sure the door is closed.
 	CloseDoor();
+
+	UWorld* currentWorld = GetWorld();
+	if ( currentWorld )
+	{
+		APlayerController* playerController = currentWorld -> GetFirstPlayerController();
+
+		if ( playerController )
+		{
+			m_ActorThatOpens = playerController -> GetPawn();
+		}
+	}
 }
 
 
-void UDoorOpener::OpenDoor()
+void UDoorSystemManager::OpenDoor()
 {
 	FRotator newRotation( 0.f, m_OpenAngle, 0.f ); // parameters order: pitch, yaw, roll.
 	m_Door -> SetActorRotation( newRotation );
 }
 
 
-void UDoorOpener::CloseDoor()
+void UDoorSystemManager::CloseDoor()
 {
 	FRotator newRotation( 0.f, 0.f, 0.f ); // parameters order: pitch, yaw, roll.
 	m_Door -> SetActorRotation( newRotation );
@@ -39,7 +50,7 @@ void UDoorOpener::CloseDoor()
 
 
 // Called every frame
-void UDoorOpener::TickComponent( float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction )
+void UDoorSystemManager::TickComponent( float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction )
 {
 	Super::TickComponent( DeltaTime, TickType, ThisTickFunction );
 
