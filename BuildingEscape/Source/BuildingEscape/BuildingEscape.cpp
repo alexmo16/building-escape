@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright alexmo16 2019.
 
 #include "BuildingEscape.h"
 #include "Modules/ModuleManager.h"

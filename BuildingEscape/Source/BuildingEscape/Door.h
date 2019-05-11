@@ -6,17 +6,17 @@
 #include "Components/ActorComponent.h"
 #include "GameFramework/Actor.h"
 
-#include "PositionReporter.generated.h"
+#include "Door.generated.h"
 
 
 UCLASS( ClassGroup = ( Custom ), meta = ( BlueprintSpawnableComponent ) )
-class BUILDINGESCAPE_API UPositionReporter : public UActorComponent
+class BUILDINGESCAPE_API UDoor : public UActorComponent
 {
 	GENERATED_BODY()
 
 public:	
 	// Sets default values for this component's properties
-	UPositionReporter();
+	UDoor();
 
 protected:
 	// Called when the game starts
@@ -25,6 +25,8 @@ protected:
 public:	
 	// Called every frame
 	virtual void TickComponent( float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction ) override;
-	
+
+	void RotateDoor(FRotator NewRotation);
+
 	AActor* m_Actor;
 };

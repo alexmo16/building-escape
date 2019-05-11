@@ -1,3 +1,5 @@
+// Copyright alexmo16 2019.
+
 #include "PositionReporter.h"
 
 // Sets default values for this component's properties
@@ -7,7 +9,7 @@ UPositionReporter::UPositionReporter()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 
-	m_actor = GetOwner();
+	m_Actor = GetOwner();
 }
 
 
@@ -16,8 +18,10 @@ void UPositionReporter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	UE_LOG(LogTemp, Warning, TEXT("PositionReporter initialization of %s..."), *m_actor->GetName());
-	
+	FString actorLocation = m_Actor->GetTransform().GetLocation().ToString();
+
+	UE_LOG( LogTemp, Warning, TEXT( "PositionReporter initialization of %s..." ), *m_Actor-> GetName() );
+	UE_LOG( LogTemp, Warning, TEXT( "Location of %s is at: %s" ), *m_Actor-> GetName(), *actorLocation );
 }
 
 
