@@ -79,6 +79,7 @@ void UGrabber::Grab()
 	// If we hit something then attach a physics handle.
 	if ( ActorHit )
 	{
+		m_PhysicsHandle -> GrabComponent( Hit.GetComponent(), NAME_None, ActorHit -> GetActorLocation(), true );
 	}
 }
 
@@ -90,7 +91,6 @@ FHitResult UGrabber::GetFirstPhysicsBodyInReach() const
 
 	if ( m_PlayerController )
 	{
-		/// Get view point vectors
 		FVector PlayerLocation;
 		FRotator PlayerViewPointRotation;
 		m_PlayerController -> GetPlayerViewPoint( OUT PlayerLocation, OUT PlayerViewPointRotation );
@@ -98,6 +98,7 @@ FHitResult UGrabber::GetFirstPhysicsBodyInReach() const
 		FVector LineTraceEnd = PlayerLocation + PlayerViewPointRotation.Vector() * m_Reach;
 		FCollisionQueryParams CollisionQuery( FName(""), false, GetOwner() ); // Ignore the pawn because the vision continiously hit the pawn.
 
+		// Get collisions with the view point vector.
 		GetWorld() -> LineTraceSingleByObjectType( 
 			OUT Hit, 
 			PlayerLocation, 
@@ -111,12 +112,24 @@ FHitResult UGrabber::GetFirstPhysicsBodyInReach() const
 }
 
 
+// Get reach vector based on view point vectors.
+FVector UGrabber::GetReachVector() const
+{
+	FVector PlayerLocation;
+	FRotator PlayerViewPointRotation;
+	m_PlayerController -> GetPlayerViewPoint( OUT PlayerLocation, OUT PlayerViewPointRotation );
+
+	FVector LineTraceEnd = PlayerLocation + PlayerViewPointRotation.Vector() * m_Reach;
+	return LineTraceEnd;
+}
+
 // Release the grabbed actor.
 void UGrabber::Release()
 {
-	UE_LOG( LogTemp, Warning, TEXT( "%s is tired." ), *GetOwner() -> GetName() );
-
-	// release physics handle component.
+	if ( m_PhysicsHandle && m_PhysicsHandle -> GrabbedComponent )
+	{
+		m_PhysicsHandle ->ReleaseComponent();
+	}
 }
 
 
@@ -126,7 +139,11 @@ void UGrabber::TickComponent( float DeltaTime, ELevelTick TickType, FActorCompon
 	Super::TickComponent( DeltaTime, TickType, ThisTickFunction );
 
 	// If the physics handle is attached
-		// move the object that we're holding.
+	// move the object that we're holding.
+	if ( m_PhysicsHandle && m_PhysicsHandle -> GrabbedComponent )
+	{
+		m_PhysicsHandle -> SetTargetLocation( GetReachVector() );
+	}
 }
 
 
