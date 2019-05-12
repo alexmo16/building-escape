@@ -91,18 +91,14 @@ FHitResult UGrabber::GetFirstPhysicsBodyInReach() const
 
 	if ( m_PlayerController )
 	{
-		FVector PlayerLocation;
-		FRotator PlayerViewPointRotation;
-		m_PlayerController -> GetPlayerViewPoint( OUT PlayerLocation, OUT PlayerViewPointRotation );
-
-		FVector LineTraceEnd = PlayerLocation + PlayerViewPointRotation.Vector() * m_Reach;
 		FCollisionQueryParams CollisionQuery( FName(""), false, GetOwner() ); // Ignore the pawn because the vision continiously hit the pawn.
+		FTwoVectors LinesTrace = GetLineTracePoints();
 
 		// Get collisions with the view point vector.
 		GetWorld() -> LineTraceSingleByObjectType( 
 			OUT Hit, 
-			PlayerLocation, 
-			LineTraceEnd, 
+			LinesTrace.v1, 
+			LinesTrace.v2, 
 			FCollisionObjectQueryParams( ECollisionChannel::ECC_PhysicsBody ),
 			CollisionQuery
 		);
@@ -112,15 +108,15 @@ FHitResult UGrabber::GetFirstPhysicsBodyInReach() const
 }
 
 
-// Get reach vector based on view point vectors.
-FVector UGrabber::GetReachVector() const
+// Get the player location and the location of the reach vector from what is looking at.
+FTwoVectors UGrabber::GetLineTracePoints() const
 {
 	FVector PlayerLocation;
 	FRotator PlayerViewPointRotation;
 	m_PlayerController -> GetPlayerViewPoint( OUT PlayerLocation, OUT PlayerViewPointRotation );
 
-	FVector LineTraceEnd = PlayerLocation + PlayerViewPointRotation.Vector() * m_Reach;
-	return LineTraceEnd;
+	FVector EndLocation = PlayerLocation + PlayerViewPointRotation.Vector() * m_Reach;
+	return FTwoVectors( PlayerLocation, EndLocation );
 }
 
 // Release the grabbed actor.
@@ -142,7 +138,7 @@ void UGrabber::TickComponent( float DeltaTime, ELevelTick TickType, FActorCompon
 	// move the object that we're holding.
 	if ( m_PhysicsHandle && m_PhysicsHandle -> GrabbedComponent )
 	{
-		m_PhysicsHandle -> SetTargetLocation( GetReachVector() );
+		m_PhysicsHandle -> SetTargetLocation( GetLineTracePoints().v2 );
 	}
 }
 

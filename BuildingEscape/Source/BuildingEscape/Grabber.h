@@ -42,7 +42,7 @@ private:
 	void BindInputs();
 
 	FHitResult GetFirstPhysicsBodyInReach() const;
-	FVector GetReachVector() const;
+	FTwoVectors GetLineTracePoints() const;
 
 	APlayerController* m_PlayerController;
 
