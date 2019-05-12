@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Delegates/Delegate.h"
 #include "Components/ActorComponent.h"
 #include "GameFramework/Actor.h"
 #include "GameFramework/PlayerController.h"
@@ -11,6 +12,8 @@
 
 #include "DoorSystemManager.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE( FOnOpenRequest );
+DECLARE_DYNAMIC_MULTICAST_DELEGATE( FOnCloseRequest );
 
 UCLASS( ClassGroup = ( Custom ), meta = ( BlueprintSpawnableComponent ) )
 class BUILDINGESCAPE_API UDoorSystemManager : public UActorComponent
@@ -32,11 +35,14 @@ public:
 	void OpenDoor();
 	void CloseDoor();
 
+	UPROPERTY( BlueprintAssignable )
+	FOnOpenRequest OnOpenRequest;
+
+	UPROPERTY( BlueprintAssignable )
+	FOnCloseRequest OnCloseRequest;
+
 private:
 	AActor* m_Door = nullptr;
-	
-	UPROPERTY(VisibleAnywhere)
-	float m_OpenAngle = -90.f; // Open the door inside the room.
 
 	UPROPERTY( EditAnywhere )
 	ATriggerVolume* m_PressurePlate = nullptr;

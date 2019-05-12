@@ -26,21 +26,13 @@ void UDoorSystemManager::BeginPlay()
 
 void UDoorSystemManager::OpenDoor()
 {
-	FRotator newRotation( 0.f, m_OpenAngle, 0.f ); // parameters order: pitch, yaw, roll.
-	if ( m_Door )
-	{
-		m_Door -> SetActorRotation( newRotation );
-	}
+	OnOpenRequest.Broadcast();
 }
 
 
 void UDoorSystemManager::CloseDoor()
 {
-	FRotator newRotation( 0.f, 0.f, 0.f ); // parameters order: pitch, yaw, roll.
-	if ( m_Door )
-	{
-		m_Door -> SetActorRotation( newRotation );
-	}
+	OnCloseRequest.Broadcast();
 }
 
 
