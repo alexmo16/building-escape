@@ -33,14 +33,14 @@ public:
 	void CloseDoor();
 
 private:
-	AActor* m_Door;
+	AActor* m_Door = nullptr;
 	
 	UPROPERTY(VisibleAnywhere)
 	float m_OpenAngle = -90.f; // Open the door inside the room.
 
 	UPROPERTY( EditAnywhere )
-	ATriggerVolume* m_PressurePlate;
+	ATriggerVolume* m_PressurePlate = nullptr;
 	
 	UPROPERTY( EditAnywhere )
-	AActor* m_ActorThatOpens;
+	AActor* m_ActorThatOpens = nullptr;
 };

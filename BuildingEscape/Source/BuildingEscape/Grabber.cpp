@@ -64,8 +64,11 @@ void UGrabber::FindInputComponent()
 // Binds differents inputs from m_InputComponent to different functions in this class.
 void UGrabber::BindInputs()
 {
-	m_InputComponent -> BindAction( "Grab", IE_Pressed, this, &UGrabber::Grab );
-	m_InputComponent -> BindAction( "Grab", IE_Released, this, &UGrabber::Release );
+	if ( m_InputComponent )
+	{
+		m_InputComponent -> BindAction( "Grab", IE_Pressed, this, &UGrabber::Grab );
+		m_InputComponent -> BindAction( "Grab", IE_Released, this, &UGrabber::Release );
+	}
 }
 
 
@@ -74,12 +77,16 @@ void UGrabber::Grab()
 {
 	// Line trace and see if we reach any actors with physics body collision channel set.
 	FHitResult Hit = GetFirstPhysicsBodyInReach();
-	AActor* ActorHit = Hit.GetActor();
 
-	// If we hit something then attach a physics handle.
-	if ( ActorHit )
+	if ( Hit.IsValidBlockingHit() )
 	{
-		m_PhysicsHandle -> GrabComponent( Hit.GetComponent(), NAME_None, ActorHit -> GetActorLocation(), true );
+		AActor* ActorHit = Hit.GetActor();
+
+		// If we hit something then attach a physics handle.
+		if ( ActorHit && m_PhysicsHandle )
+		{
+			m_PhysicsHandle -> GrabComponent( Hit.GetComponent(), NAME_None, ActorHit -> GetActorLocation(), true );
+		}
 	}
 }
 
@@ -113,10 +120,14 @@ FTwoVectors UGrabber::GetLineTracePoints() const
 {
 	FVector PlayerLocation;
 	FRotator PlayerViewPointRotation;
-	m_PlayerController -> GetPlayerViewPoint( OUT PlayerLocation, OUT PlayerViewPointRotation );
+	if ( m_PlayerController )
+	{
+		m_PlayerController -> GetPlayerViewPoint( OUT PlayerLocation, OUT PlayerViewPointRotation );
 
-	FVector EndLocation = PlayerLocation + PlayerViewPointRotation.Vector() * m_Reach;
-	return FTwoVectors( PlayerLocation, EndLocation );
+		FVector EndLocation = PlayerLocation + PlayerViewPointRotation.Vector() * m_Reach;
+		return FTwoVectors( PlayerLocation, EndLocation );
+	}
+	 return FTwoVectors ( FVector(), FVector() );
 }
 
 // Release the grabbed actor.

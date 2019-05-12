@@ -27,14 +27,20 @@ void UDoorSystemManager::BeginPlay()
 void UDoorSystemManager::OpenDoor()
 {
 	FRotator newRotation( 0.f, m_OpenAngle, 0.f ); // parameters order: pitch, yaw, roll.
-	m_Door -> SetActorRotation( newRotation );
+	if ( m_Door )
+	{
+		m_Door -> SetActorRotation( newRotation );
+	}
 }
 
 
 void UDoorSystemManager::CloseDoor()
 {
 	FRotator newRotation( 0.f, 0.f, 0.f ); // parameters order: pitch, yaw, roll.
-	m_Door -> SetActorRotation( newRotation );
+	if ( m_Door )
+	{
+		m_Door -> SetActorRotation( newRotation );
+	}
 }
 
 
@@ -49,7 +55,7 @@ void UDoorSystemManager::TickComponent( float DeltaTime, ELevelTick TickType, FA
 	{
 		OpenDoor();
 	}
-	else if ( m_Door -> GetActorRotation().Yaw != 0.f )
+	else if ( m_Door && m_Door -> GetActorRotation().Yaw != 0.f )
 	{
 		CloseDoor();
 	}

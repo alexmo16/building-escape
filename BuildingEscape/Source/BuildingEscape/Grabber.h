@@ -44,7 +44,7 @@ private:
 	FHitResult GetFirstPhysicsBodyInReach() const;
 	FTwoVectors GetLineTracePoints() const;
 
-	APlayerController* m_PlayerController;
+	APlayerController* m_PlayerController = nullptr;
 
 	UPROPERTY( EditAnywhere )
 	float m_Reach = 100.f; // in cm.
