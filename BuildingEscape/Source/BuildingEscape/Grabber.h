@@ -34,6 +34,14 @@ public:
 
 private:
 	void DrawVisionLine( FVector& PlayerLocation, FVector& LineTraceEnd ); // Debug function.
+	
+	void FindPhysicsHandleComponent();
+	
+	void SetupInputComponent();
+	void FindInputComponent();
+	void BindInputs();
+
+	FHitResult GetFirstPhysicsBodyInReach() const;
 
 	APlayerController* m_PlayerController;
 

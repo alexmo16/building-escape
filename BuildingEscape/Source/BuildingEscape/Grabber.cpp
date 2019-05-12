@@ -25,45 +25,77 @@ void UGrabber::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// Look for attached Physics Handle.
+	FindPhysicsHandleComponent();
+	SetupInputComponent();
+}
 
+
+// Look for attached Physics Handle.
+void UGrabber::FindPhysicsHandleComponent()
+{
 	m_PhysicsHandle = GetOwner() -> FindComponentByClass < UPhysicsHandleComponent > ();
 	if ( !m_PhysicsHandle )
 	{
 		UE_LOG( LogTemp, Error, TEXT( "Error : %s missing Physics Handle." ), *GetOwner() -> GetName() );
 		return;
 	}
+}
 
+
+void UGrabber::SetupInputComponent()
+{
+	FindInputComponent();
+	BindInputs();
+}
+
+
+// Look for attached Input Component.
+void UGrabber::FindInputComponent()
+{
 	m_InputComponent = GetOwner() -> FindComponentByClass < UInputComponent > ();
 	if ( !m_InputComponent )
 	{
 		UE_LOG( LogTemp, Error, TEXT( "Error : %s missing Input Component." ), *GetOwner() -> GetName() );
 		return;
 	}
+}
 
+
+// Binds differents inputs from m_InputComponent to different functions in this class.
+void UGrabber::BindInputs()
+{
 	m_InputComponent -> BindAction( "Grab", IE_Pressed, this, &UGrabber::Grab );
 	m_InputComponent -> BindAction( "Grab", IE_Released, this, &UGrabber::Release );
 }
 
 
-// Called every frame
-void UGrabber::TickComponent( float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction )
+// Grab an actor.
+void UGrabber::Grab()
 {
-	Super::TickComponent( DeltaTime, TickType, ThisTickFunction );
+	// Line trace and see if we reach any actors with physics body collision channel set.
+	FHitResult Hit = GetFirstPhysicsBodyInReach();
+	AActor* ActorHit = Hit.GetActor();
+
+	// If we hit something then attach a physics handle.
+	if ( ActorHit )
+	{
+	}
+}
+
+
+// Return hit for first physics body in reach.
+FHitResult UGrabber::GetFirstPhysicsBodyInReach() const
+{
+	FHitResult Hit;
 
 	if ( m_PlayerController )
 	{
-		// Get view point vectors
-		
+		/// Get view point vectors
 		FVector PlayerLocation;
 		FRotator PlayerViewPointRotation;
 		m_PlayerController -> GetPlayerViewPoint( OUT PlayerLocation, OUT PlayerViewPointRotation );
 
 		FVector LineTraceEnd = PlayerLocation + PlayerViewPointRotation.Vector() * m_Reach;
-		// DrawVisionLine( PlayerLocation, LineTraceEnd ); // For debugging
-
-
-		FHitResult Hit;
 		FCollisionQueryParams CollisionQuery( FName(""), false, GetOwner() ); // Ignore the pawn because the vision continiously hit the pawn.
 
 		GetWorld() -> LineTraceSingleByObjectType( 
@@ -73,13 +105,28 @@ void UGrabber::TickComponent( float DeltaTime, ELevelTick TickType, FActorCompon
 			FCollisionObjectQueryParams( ECollisionChannel::ECC_PhysicsBody ),
 			CollisionQuery
 		);
-
-		AActor* ActorHit = Hit.GetActor();
-		if ( ActorHit )
-		{
-			UE_LOG( LogTemp, Warning, TEXT("Pawn hit: %s."), *ActorHit -> GetName() );
-		}
 	}
+
+	return Hit;
+}
+
+
+// Release the grabbed actor.
+void UGrabber::Release()
+{
+	UE_LOG( LogTemp, Warning, TEXT( "%s is tired." ), *GetOwner() -> GetName() );
+
+	// release physics handle component.
+}
+
+
+// Called every frame
+void UGrabber::TickComponent( float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction )
+{
+	Super::TickComponent( DeltaTime, TickType, ThisTickFunction );
+
+	// If the physics handle is attached
+		// move the object that we're holding.
 }
 
 
@@ -95,16 +142,4 @@ void UGrabber::DrawVisionLine( FVector& PlayerLocation, FVector& LineTraceEnd )
 			0.f,
 			10.f
 		);
-}
-
-
-void UGrabber::Grab()
-{
-	UE_LOG( LogTemp, Warning, TEXT( "%s wants to grab." ), *GetOwner() -> GetName() );
-}
-
-
-void UGrabber::Release()
-{
-	UE_LOG( LogTemp, Warning, TEXT( "%s is tired." ), *GetOwner() -> GetName() );
 }
