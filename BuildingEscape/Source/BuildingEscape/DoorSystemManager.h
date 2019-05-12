@@ -12,8 +12,8 @@
 
 #include "DoorSystemManager.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE( FOnOpenRequest );
-DECLARE_DYNAMIC_MULTICAST_DELEGATE( FOnCloseRequest );
+DECLARE_DYNAMIC_MULTICAST_DELEGATE( FDoorEvents );
+//DECLARE_DYNAMIC_MULTICAST_DELEGATE( FOnCloseRequest );
 
 UCLASS( ClassGroup = ( Custom ), meta = ( BlueprintSpawnableComponent ) )
 class BUILDINGESCAPE_API UDoorSystemManager : public UActorComponent
@@ -36,10 +36,10 @@ public:
 	void CloseDoor();
 
 	UPROPERTY( BlueprintAssignable )
-	FOnOpenRequest OnOpenRequest;
+	FDoorEvents OnOpenRequest;
 
 	UPROPERTY( BlueprintAssignable )
-	FOnCloseRequest OnCloseRequest;
+	FDoorEvents OnCloseRequest;
 
 private:
 	AActor* m_Door = nullptr;
