@@ -76,4 +76,5 @@ BuildingEscape/Plugins/*/Intermediate/*
 # Cache files for the editor to use
 BuildingEscape/DerivedDataCache/*
 
-BuildingEscape/Content/StarterContent/
+BuildingEscape/Content/StarterContent/Textures
+BuildingEscape/Content/StarterContent/HDRI
