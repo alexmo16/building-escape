@@ -54,4 +54,3 @@ void UDoorSystemManager::TickComponent( float DeltaTime, ELevelTick TickType, FA
 		CloseDoor();
 	}
 }
-
