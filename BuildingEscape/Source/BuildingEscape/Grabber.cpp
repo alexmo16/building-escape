@@ -24,6 +24,25 @@ UGrabber::UGrabber()
 void UGrabber::BeginPlay()
 {
 	Super::BeginPlay();
+
+	// Look for attached Physics Handle.
+
+	m_PhysicsHandle = GetOwner() -> FindComponentByClass < UPhysicsHandleComponent > ();
+	if ( !m_PhysicsHandle )
+	{
+		UE_LOG( LogTemp, Error, TEXT( "Error : %s missing Physics Handle." ), *GetOwner() -> GetName() );
+		return;
+	}
+
+	m_InputComponent = GetOwner() -> FindComponentByClass < UInputComponent > ();
+	if ( !m_InputComponent )
+	{
+		UE_LOG( LogTemp, Error, TEXT( "Error : %s missing Input Component." ), *GetOwner() -> GetName() );
+		return;
+	}
+
+	m_InputComponent -> BindAction( "Grab", IE_Pressed, this, &UGrabber::Grab );
+	m_InputComponent -> BindAction( "Grab", IE_Released, this, &UGrabber::Release );
 }
 
 
@@ -34,18 +53,37 @@ void UGrabber::TickComponent( float DeltaTime, ELevelTick TickType, FActorCompon
 
 	if ( m_PlayerController )
 	{
-		// Get view point vectors/
+		// Get view point vectors
+		
 		FVector PlayerLocation;
 		FRotator PlayerViewPointRotation;
 		m_PlayerController -> GetPlayerViewPoint( OUT PlayerLocation, OUT PlayerViewPointRotation );
 
-		FVector LineTraceEnd = PlayerLocation + PlayerViewPointRotation.Vector() * m_VisionReach;
+		FVector LineTraceEnd = PlayerLocation + PlayerViewPointRotation.Vector() * m_Reach;
 		// DrawVisionLine( PlayerLocation, LineTraceEnd ); // For debugging
+
+
+		FHitResult Hit;
+		FCollisionQueryParams CollisionQuery( FName(""), false, GetOwner() ); // Ignore the pawn because the vision continiously hit the pawn.
+
+		GetWorld() -> LineTraceSingleByObjectType( 
+			OUT Hit, 
+			PlayerLocation, 
+			LineTraceEnd, 
+			FCollisionObjectQueryParams( ECollisionChannel::ECC_PhysicsBody ),
+			CollisionQuery
+		);
+
+		AActor* ActorHit = Hit.GetActor();
+		if ( ActorHit )
+		{
+			UE_LOG( LogTemp, Warning, TEXT("Pawn hit: %s."), *ActorHit -> GetName() );
+		}
 	}
 }
 
 
-void UGrabber::DrawVisionLine( FVector PlayerLocation, FVector LineTraceEnd )
+void UGrabber::DrawVisionLine( FVector& PlayerLocation, FVector& LineTraceEnd )
 {
 	DrawDebugLine(
 			GetWorld(),
@@ -57,4 +95,16 @@ void UGrabber::DrawVisionLine( FVector PlayerLocation, FVector LineTraceEnd )
 			0.f,
 			10.f
 		);
+}
+
+
+void UGrabber::Grab()
+{
+	UE_LOG( LogTemp, Warning, TEXT( "%s wants to grab." ), *GetOwner() -> GetName() );
+}
+
+
+void UGrabber::Release()
+{
+	UE_LOG( LogTemp, Warning, TEXT( "%s is tired." ), *GetOwner() -> GetName() );
 }

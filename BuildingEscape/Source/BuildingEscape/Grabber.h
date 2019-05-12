@@ -4,8 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Components/InputComponent.h"
 #include "Engine/World.h"
 #include "GameFramework/PlayerController.h"
+#include "PhysicsEngine/PhysicsHandleComponent.h"
 
 #include "Grabber.generated.h"
 
@@ -27,11 +29,18 @@ public:
 	// Called every frame
 	virtual void TickComponent( float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction ) override;
 
+	void Grab();
+	void Release();
+
 private:
-	void DrawVisionLine( FVector PlayerLocation, FVector LineTraceEnd ); // Debug function.
+	void DrawVisionLine( FVector& PlayerLocation, FVector& LineTraceEnd ); // Debug function.
 
 	APlayerController* m_PlayerController;
 
 	UPROPERTY( EditAnywhere )
-	float m_VisionReach = 100.f;
+	float m_Reach = 100.f; // in cm.
+
+	UPhysicsHandleComponent* m_PhysicsHandle = nullptr;
+
+	UInputComponent* m_InputComponent = nullptr;
 };

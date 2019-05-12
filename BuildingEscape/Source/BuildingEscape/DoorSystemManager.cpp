@@ -21,17 +21,6 @@ void UDoorSystemManager::BeginPlay()
 
 	// Make sure the door is closed.
 	CloseDoor();
-
-	UWorld* currentWorld = GetWorld();
-	if ( currentWorld )
-	{
-		APlayerController* playerController = currentWorld -> GetFirstPlayerController();
-
-		if ( playerController )
-		{
-			m_ActorThatOpens = playerController -> GetPawn();
-		}
-	}
 }
 
 
